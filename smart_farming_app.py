@@ -7,6 +7,7 @@ import numpy as np
 from PIL import Image
 from tensorflow import keras
 from db_config import users_collection
+st.set_page_config(page_title="Smart Farming Advisor", page_icon="🌾", layout="wide")
 
 
 # ------------------ Simple Auth Setup ------------------
@@ -26,29 +27,36 @@ def login_page():
 
     if option == "Login":
         if st.button("Login"):
-            # Check in MongoDB instead of session_state
-            user = users_collection.find_one({"username": username, "password": password})
-            if user:
-                st.session_state.user_authenticated = True
-                st.session_state.username = username
-                st.success(f"Welcome back, {username} 👋")
-                st.rerun()
-            else:
-                st.error("Invalid username or password")
+            try:
+                user = users_collection.find_one({"username": username, "password": password})
+                if user:
+                    st.session_state.user_authenticated = True
+                    st.session_state.username = username
+                    st.success(f"Welcome back, {username} 👋")
+                    st.rerun()
+                else:
+                    st.error("Invalid username or password ❌")
+            except Exception as e:
+                st.error(f"Database error: {e}")
 
     elif option == "Sign Up":
         if st.button("Create Account"):
-            existing_user = users_collection.find_one({"username": username})
-            if existing_user:
-                st.warning("Username already exists. Try logging in.")
-            elif len(username.strip()) == 0 or len(password.strip()) == 0:
-                st.warning("Please fill out both fields.")
-            else:
-                users_collection.insert_one({"username": username, "password": password})
-                st.success("Account created successfully! You can now log in.")
+            try:
+                if len(username.strip()) == 0 or len(password.strip()) == 0:
+                    st.warning("Please fill out both fields.")
+                    return
 
-
-
+                existing_user = users_collection.find_one({"username": username})
+                if existing_user:
+                    st.warning("Username already exists. Try logging in.")
+                else:
+                    users_collection.insert_one({"username": username, "password": password})
+                    st.success("✅ Account created successfully! Logging you in...")
+                    st.session_state.user_authenticated = True
+                    st.session_state.username = username
+                    st.rerun()
+            except Exception as e:
+                st.error(f"Database error: {e}")
 
 # ---------------- DASHBOARD FUNCTION ----------------
 def dashboard_page():
