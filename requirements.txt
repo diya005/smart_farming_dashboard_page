@@ -8,5 +8,7 @@ Pillow
 tensorflow
 tensorflow-hub
 Pillow
+pymongo
+
 
 
