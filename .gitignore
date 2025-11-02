@@ -1,0 +1,27 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+tfenv/
+.venv/
+
+# Jupyter and logs
+*.ipynb_checkpoints
+*.log
+
+# Models and data
+*.pkl
+*.h5
+*.keras
+*.csv
+*.xlsx
+*.ods
+*.zip
+
+# System
+.DS_Store
+Thumbs.db
