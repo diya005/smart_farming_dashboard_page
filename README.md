@@ -1,1 +1,1 @@
-![Uploading image.png…]()
+https://smartfarmingdashboardpage-nappnubvjc8nfvj8yqjaycs.streamlit.app/
