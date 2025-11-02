@@ -6,6 +6,8 @@ import tensorflow as tf
 import numpy as np
 from PIL import Image
 from tensorflow import keras
+from db_config import users_collection
+
 
 # ------------------ Simple Auth Setup ------------------
 if "user_authenticated" not in st.session_state:
@@ -24,7 +26,8 @@ def login_page():
 
     if option == "Login":
         if st.button("Login"):
-            if username in st.session_state.users and st.session_state.users[username] == password:
+            user = users_collection.find_one({"username": username, "password": password})
+            if user:
                 st.session_state.user_authenticated = True
                 st.success(f"Welcome back, {username} 👋")
                 st.rerun()
@@ -33,13 +36,18 @@ def login_page():
 
     elif option == "Sign Up":
         if st.button("Create Account"):
-            if username in st.session_state.users:
+            existing_user = users_collection.find_one({"username": username})
+            if existing_user:
                 st.warning("Username already exists. Try logging in.")
             elif len(username.strip()) == 0 or len(password.strip()) == 0:
                 st.warning("Please fill out both fields.")
             else:
-                st.session_state.users[username] = password
+                users_collection.insert_one({
+                    "username": username,
+                    "password": password
+                })
                 st.success("Account created successfully! You can now log in.")
+
 
 
 # ---------------- DASHBOARD FUNCTION ----------------
